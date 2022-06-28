@@ -48,6 +48,9 @@ Param
 )
 
 $PSDefaultParameterValues = @{'*:ErrorAction' = 'Stop'} #Ensure that all Errors from Cmdlets are "catchable" => Terminating Errors
+
+$ParameterNames = @('SysinternalsPath', 'SourcePath')
+
 #To Ensure you can install the Tools to a Path that requires elevated rights for Installation
 if (-not ([System.Security.Principal.WindowsPrincipal][System.Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator))
 {
@@ -59,10 +62,18 @@ if (-not ([System.Security.Principal.WindowsPrincipal][System.Security.Principal
     {
         $executableName = 'powershell.exe'
     }
-    $arguments = '-File "{0}"' -f $MyInvocation.MyCommand.Definition
+    $boundParams = ($ParameterNames | ForEach-Object {'{0} "{1}"'-f $PSItem, (Get-Variable -Name $PSItem).Value}) -join " -" # Provide the same Parameters to the elevated Process
+    if($Force)
+    {
+        $arguments = '-File "{0}" -{1} -Force' -f $MyInvocation.MyCommand.Definition, $boundParams
+    }
+    else 
+    {
+        $arguments = '-File "{0}" -{1}' -f $MyInvocation.MyCommand.Definition, $boundParams
+    }
     $powerShellPath = [System.IO.Path]::Combine($PSHome, $executableName)
     Start-Process $powerShellPath -Verb runAs -ArgumentList $arguments #Start Process elevated
-    return #Do no proceed from here
+    return
 }
 try 
 {
