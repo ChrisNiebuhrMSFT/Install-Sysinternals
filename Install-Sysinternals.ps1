@@ -26,7 +26,7 @@ if (-not ([System.Security.Principal.WindowsPrincipal][System.Security.Principal
     $arguments = '-File "{0}"' -f $MyInvocation.MyCommand.Definition
     $powerShellPath = [System.IO.Path]::Combine($PSHome, $executableName)
     Start-Process $powerShellPath -Verb runAs -ArgumentList $arguments #Start Process elevated
-    break
+    return #Do no proceed from here
 }
 try 
 {
@@ -64,7 +64,7 @@ try
 }
 catch
 {
-    Write-Host "$PSItem"
+    Write-Host "$PSItem" #Display any Error-Messages
 }
 finally
 {
