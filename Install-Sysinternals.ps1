@@ -44,7 +44,7 @@ Param
     [string]
     $SourcePath = 'https://download.sysinternals.com/files/SysinternalsSuite.zip', #You only need to change this, if you like to Install / Update from a local Path
     [switch]
-    $Force # Force closing all running Sysinternals Tools
+    $Force # Force closing all running Sysinternals Tools and automatically closes the Install / Update Window
 )
 
 $PSDefaultParameterValues = @{'*:ErrorAction' = 'Stop'} #Ensure that all Errors from Cmdlets are "catchable" => Terminating Errors
@@ -115,6 +115,9 @@ catch
 }
 finally
 {
-    Remove-Item -Path $SysinternalsZipPath -Force
-    Read-Host
+    Remove-Item -Path $SysinternalsZipPath -Forcec
+    if(-not $Force) #If -Force Parameter is used the PS Windows will be closed automatically
+    {
+        Read-Host
+    }
 }
