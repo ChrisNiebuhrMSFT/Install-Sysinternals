@@ -115,7 +115,7 @@ catch
 }
 finally
 {
-    Remove-Item -Path $SysinternalsZipPath -Forcec
+    Remove-Item -Path $SysinternalsZipPath -Force
     if(-not $Force) #If -Force Parameter is used the PS Windows will be closed automatically
     {
         Read-Host
